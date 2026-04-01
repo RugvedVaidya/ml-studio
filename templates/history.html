@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>My Runs — AutoML</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>  /* ── Design System ─────────────────────────────────────────────────────────
+     Inter font, consistent tokens, refined components.
+     Applied globally across all pages via inline <style> blocks.
+  ── */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --brand:       #2563eb;
+    --brand-dark:  #1d4ed8;
+    --brand-light: #eff6ff;
+    --success:     #16a34a;
+    --warning:     #d97706;
+    --danger:      #dc2626;
+    --surface:     #ffffff;
+    --surface-2:   #f8fafc;
+    --border:      #e2e8f0;
+    --text-1:      #0f172a;
+    --text-2:      #475569;
+    --text-3:      #94a3b8;
+    --radius:      10px;
+    --radius-lg:   14px;
+    --shadow-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow:      0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
+    --shadow-lg:   0 10px 40px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.05);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--surface-2);
+    color: var(--text-1);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Navbar ── */
+  .ds-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .ds-nav-brand {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-1);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .ds-nav-brand span { color: var(--brand); }
+
+  /* ── Cards ── */
+  .ds-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .ds-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+  .ds-card-header h2, .ds-card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-1);
+    margin: 0;
+  }
+  .ds-card-body { padding: 1.25rem; }
+
+  /* ── Accent header (primary blue) ── */
+  .ds-card-header-accent {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    border-bottom: none;
+  }
+  .ds-card-header-accent h2,
+  .ds-card-header-accent h3,
+  .ds-card-header-accent .ds-subtitle { color: #fff !important; }
+
+  /* ── Stat boxes ── */
+  .ds-stat {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
+  .ds-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--brand);
+    line-height: 1.1;
+  }
+  .ds-stat-label {
+    font-size: .75rem;
+    color: var(--text-2);
+    margin-top: .25rem;
+    font-weight: 500;
+  }
+  .ds-stat.warn .ds-stat-value { color: var(--warning); }
+  .ds-stat.success .ds-stat-value { color: var(--success); }
+
+  /* ── Buttons ── */
+  .ds-btn {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .5rem 1.1rem;
+    font-size: .875rem; font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all .15s;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+  .ds-btn-primary {
+    background: var(--brand); color: #fff; border-color: var(--brand);
+  }
+  .ds-btn-primary:hover { background: var(--brand-dark); color: #fff; }
+  .ds-btn-success  { background: var(--success); color: #fff; border-color: var(--success); }
+  .ds-btn-success:hover  { background: #15803d; color: #fff; }
+  .ds-btn-ghost    { background: transparent; color: var(--text-2); border-color: var(--border); }
+  .ds-btn-ghost:hover    { background: var(--surface-2); }
+  .ds-btn-sm { padding: .3rem .75rem; font-size: .8rem; }
+  .ds-btn-lg { padding: .7rem 1.75rem; font-size: 1rem; }
+  .ds-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+  /* ── Badges ── */
+  .ds-badge {
+    display: inline-flex; align-items: center;
+    padding: .2rem .6rem;
+    font-size: .72rem; font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: .02em;
+  }
+  .ds-badge-success { background: #dcfce7; color: #15803d; }
+  .ds-badge-blue    { background: #dbeafe; color: #1d4ed8; }
+  .ds-badge-amber   { background: #fef3c7; color: #b45309; }
+  .ds-badge-red     { background: #fee2e2; color: #b91c1c; }
+  .ds-badge-gray    { background: #f1f5f9; color: #475569; }
+  .ds-badge-purple  { background: #ede9fe; color: #6d28d9; }
+
+  /* ── Tables ── */
+  .ds-table { width: 100%; border-collapse: collapse; }
+  .ds-table th {
+    text-align: left;
+    padding: .65rem 1rem;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .ds-table td {
+    padding: .7rem 1rem;
+    font-size: .875rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .ds-table tr:last-child td { border-bottom: none; }
+  .ds-table tr:hover td { background: var(--brand-light); }
+  .ds-table .best-row td { background: #f0fdf4; }
+
+  /* ── Page hero ── */
+  .ds-hero {
+    background: linear-gradient(135deg, var(--brand) 0%, #1e3a8a 100%);
+    color: #fff;
+    padding: 2rem 0 1.75rem;
+  }
+  .ds-hero h1 { font-size: 1.7rem; font-weight: 700; margin: 0 0 .3rem; }
+  .ds-hero p  { opacity: .8; margin: 0; font-size: .95rem; }
+
+  /* ── Metric chips ── */
+  .ds-metric { display: inline-block; padding: .2rem .7rem; border-radius: 6px; font-weight: 600; font-size: .85rem; }
+  .ds-metric-green  { background: #dcfce7; color: #15803d; }
+  .ds-metric-yellow { background: #fef3c7; color: #b45309; }
+  .ds-metric-red    { background: #fee2e2; color: #b91c1c; }
+
+  /* ── Section spacing ── */
+  .ds-section { margin-bottom: 1.5rem; }
+
+  .task-cls { background:#dbeafe;color:#1d4ed8; }
+  .task-reg { background:#fef3c7;color:#b45309; }
+  .task-clu { background:#ede9fe;color:#6d28d9; }
+  .score-good   { color:var(--success);font-weight:600; }
+  .score-medium { color:var(--warning);font-weight:600; }
+  .score-poor   { color:var(--danger);font-weight:600; }
+  .empty-state { padding:4rem 1rem;text-align:center;color:var(--text-2); }
+  .empty-icon  { font-size:3rem;margin-bottom:1rem;opacity:.4; }
+  </style>
+</head><body>
+
+<nav class="ds-nav">
+  <a href="/" class="ds-nav-brand">🤖 Auto<span>ML</span></a>
+  <div style="display:flex;gap:.5rem;align-items:center;">
+    <span style="font-size:.82rem;color:var(--text-2);">👤 {{ username }}</span>
+    <a href="/" class="ds-btn ds-btn-ghost ds-btn-sm">+ New Run</a>
+    <a href="/api/docs" class="ds-btn ds-btn-ghost ds-btn-sm">API</a>
+    <a href="/logout" class="ds-btn ds-btn-ghost ds-btn-sm">Logout</a>
+  </div>
+</nav>
+
+<div class="ds-hero">
+  <div class="container">
+    <h1>My Experiments</h1>
+    <p>All training runs saved to your account</p>
+  </div>
+</div>
+
+<div class="container py-4" style="max-width:1100px;">
+
+  {% if runs %}
+
+  <!-- Summary stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="ds-stat"><div class="ds-stat-value">{{ runs|length }}</div><div class="ds-stat-label">Total Runs</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="ds-stat"><div class="ds-stat-value" style="color:#1d4ed8;">{{ runs | selectattr('task_type','equalto','classification') | list | length }}</div><div class="ds-stat-label">Classification</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="ds-stat"><div class="ds-stat-value" style="color:#b45309;">{{ runs | selectattr('task_type','equalto','regression') | list | length }}</div><div class="ds-stat-label">Regression</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      {% set best = runs | sort(attribute='best_score',reverse=True) | first %}
+      <div class="ds-stat success">
+        <div class="ds-stat-value">
+          {% if best and best.best_score %}
+            {% if best.task_type == 'classification' %}{{ "%.1f"|format(best.best_score) }}%
+            {% else %}{{ "%.3f"|format(best.best_score) }}{% endif %}
+          {% else %}—{% endif %}
+        </div>
+        <div class="ds-stat-label">Best Score Ever</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Runs table -->
+  <div class="ds-card">
+    <div class="ds-card-header">
+      <h2>Run History</h2>
+      <span style="font-size:.8rem;color:var(--text-3);">Most recent first</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="ds-table">
+        <thead><tr>
+          <th>#</th><th>Date</th><th>Dataset</th><th>Target</th>
+          <th>Task</th><th>Best Model</th><th>Score</th><th>Models</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          {% for run in runs %}
+          <tr>
+            <td style="color:var(--text-3);">{{ loop.index }}</td>
+            <td style="white-space:nowrap;">
+              <div style="font-size:.83rem;">{{ run.created[:10] }}</div>
+              <div style="font-size:.75rem;color:var(--text-3);">{{ run.created[11:16] }}</div>
+            </td>
+            <td><code style="font-size:.78rem;">{{ run.dataset_name or '—' }}</code></td>
+            <td><code style="font-size:.78rem;">{{ run.target_column or '—' }}</code></td>
+            <td><span class="ds-badge {% if run.task_type == 'classification' %}task-cls{% elif run.task_type == 'regression' %}task-reg{% else %}task-clu{% endif %}">{{ run.task_type | title }}</span></td>
+            <td><strong style="font-size:.875rem;">{{ run.best_model or '—' }}</strong></td>
+            <td>
+              {% if run.best_score is not none %}
+                {% if run.task_type == 'classification' %}
+                  <span class="{% if run.best_score >= 80 %}score-good{% elif run.best_score >= 65 %}score-medium{% else %}score-poor{% endif %}">{{ "%.1f"|format(run.best_score) }}%</span>
+                {% else %}
+                  <span class="{% if run.best_score >= 0.8 %}score-good{% elif run.best_score >= 0.5 %}score-medium{% else %}score-poor{% endif %}">R²={{ "%.3f"|format(run.best_score) }}</span>
+                {% endif %}
+              {% else %}—{% endif %}
+            </td>
+            <td><span class="ds-badge ds-badge-gray">{{ run.n_models }}</span></td>
+            <td>
+              <div style="display:flex;gap:.3rem;flex-wrap:wrap;">
+                {% if run.report_id %}
+                <a href="/download_report/{{ run.report_id }}" class="ds-btn ds-btn-ghost ds-btn-sm">⬇ Report</a>
+                {% endif %}
+                {% if run.meta_path %}
+                <a href="/predict_page?meta={{ run.meta_path }}" class="ds-btn ds-btn-ghost ds-btn-sm" style="color:var(--brand);">🔮 Predict</a>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="ds-card">
+    <div class="empty-state">
+      <div class="empty-icon">🧪</div>
+      <h4 style="font-weight:600;margin-bottom:.5rem;">No experiments yet</h4>
+      <p style="color:var(--text-2);margin-bottom:1rem;">Upload a dataset and train your first model.</p>
+      <a href="/" class="ds-btn ds-btn-primary">Start First Experiment</a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body></html>

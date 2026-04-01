@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Results — AutoML Platform</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+  /* ── Design System ─────────────────────────────────────────────────────────
+     Inter font, consistent tokens, refined components.
+     Applied globally across all pages via inline <style> blocks.
+  ── */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --brand:       #2563eb;
+    --brand-dark:  #1d4ed8;
+    --brand-light: #eff6ff;
+    --success:     #16a34a;
+    --warning:     #d97706;
+    --danger:      #dc2626;
+    --surface:     #ffffff;
+    --surface-2:   #f8fafc;
+    --border:      #e2e8f0;
+    --text-1:      #0f172a;
+    --text-2:      #475569;
+    --text-3:      #94a3b8;
+    --radius:      10px;
+    --radius-lg:   14px;
+    --shadow-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow:      0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
+    --shadow-lg:   0 10px 40px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.05);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--surface-2);
+    color: var(--text-1);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Navbar ── */
+  .ds-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .ds-nav-brand {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-1);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .ds-nav-brand span { color: var(--brand); }
+
+  /* ── Cards ── */
+  .ds-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .ds-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+  .ds-card-header h2, .ds-card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-1);
+    margin: 0;
+  }
+  .ds-card-body { padding: 1.25rem; }
+
+  /* ── Accent header (primary blue) ── */
+  .ds-card-header-accent {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    border-bottom: none;
+  }
+  .ds-card-header-accent h2,
+  .ds-card-header-accent h3,
+  .ds-card-header-accent .ds-subtitle { color: #fff !important; }
+
+  /* ── Stat boxes ── */
+  .ds-stat {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
+  .ds-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--brand);
+    line-height: 1.1;
+  }
+  .ds-stat-label {
+    font-size: .75rem;
+    color: var(--text-2);
+    margin-top: .25rem;
+    font-weight: 500;
+  }
+  .ds-stat.warn .ds-stat-value { color: var(--warning); }
+  .ds-stat.success .ds-stat-value { color: var(--success); }
+
+  /* ── Buttons ── */
+  .ds-btn {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .5rem 1.1rem;
+    font-size: .875rem; font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all .15s;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+  .ds-btn-primary {
+    background: var(--brand); color: #fff; border-color: var(--brand);
+  }
+  .ds-btn-primary:hover { background: var(--brand-dark); color: #fff; }
+  .ds-btn-success  { background: var(--success); color: #fff; border-color: var(--success); }
+  .ds-btn-success:hover  { background: #15803d; color: #fff; }
+  .ds-btn-ghost    { background: transparent; color: var(--text-2); border-color: var(--border); }
+  .ds-btn-ghost:hover    { background: var(--surface-2); }
+  .ds-btn-sm { padding: .3rem .75rem; font-size: .8rem; }
+  .ds-btn-lg { padding: .7rem 1.75rem; font-size: 1rem; }
+  .ds-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+  /* ── Badges ── */
+  .ds-badge {
+    display: inline-flex; align-items: center;
+    padding: .2rem .6rem;
+    font-size: .72rem; font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: .02em;
+  }
+  .ds-badge-success { background: #dcfce7; color: #15803d; }
+  .ds-badge-blue    { background: #dbeafe; color: #1d4ed8; }
+  .ds-badge-amber   { background: #fef3c7; color: #b45309; }
+  .ds-badge-red     { background: #fee2e2; color: #b91c1c; }
+  .ds-badge-gray    { background: #f1f5f9; color: #475569; }
+  .ds-badge-purple  { background: #ede9fe; color: #6d28d9; }
+
+  /* ── Tables ── */
+  .ds-table { width: 100%; border-collapse: collapse; }
+  .ds-table th {
+    text-align: left;
+    padding: .65rem 1rem;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .ds-table td {
+    padding: .7rem 1rem;
+    font-size: .875rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .ds-table tr:last-child td { border-bottom: none; }
+  .ds-table tr:hover td { background: var(--brand-light); }
+  .ds-table .best-row td { background: #f0fdf4; }
+
+  /* ── Page hero ── */
+  .ds-hero {
+    background: linear-gradient(135deg, var(--brand) 0%, #1e3a8a 100%);
+    color: #fff;
+    padding: 2rem 0 1.75rem;
+  }
+  .ds-hero h1 { font-size: 1.7rem; font-weight: 700; margin: 0 0 .3rem; }
+  .ds-hero p  { opacity: .8; margin: 0; font-size: .95rem; }
+
+  /* ── Metric chips ── */
+  .ds-metric { display: inline-block; padding: .2rem .7rem; border-radius: 6px; font-weight: 600; font-size: .85rem; }
+  .ds-metric-green  { background: #dcfce7; color: #15803d; }
+  .ds-metric-yellow { background: #fef3c7; color: #b45309; }
+  .ds-metric-red    { background: #fee2e2; color: #b91c1c; }
+
+  /* ── Section spacing ── */
+  .ds-section { margin-bottom: 1.5rem; }
+
+  .hero-stat { text-align:center; padding:1.1rem .75rem; background:rgba(255,255,255,.12);
+    border-radius:var(--radius); border:1px solid rgba(255,255,255,.2); }
+  .hero-stat-val { font-size:1.6rem; font-weight:700; color:#fff; line-height:1.1; }
+  .hero-stat-lbl { font-size:.72rem; color:rgba(255,255,255,.7); margin-top:.2rem; text-transform:uppercase; letter-spacing:.06em; }
+  .metric-pill { display:inline-block; padding:.15rem .6rem; border-radius:6px; font-weight:600; font-size:.83rem; }
+  .cv-cell { font-size:.83rem; }
+  .param-code { background:var(--surface-2); border:1px solid var(--border); border-radius:5px;
+    padding:.15rem .5rem; font-size:.78rem; font-family:monospace; color:var(--text-1); }
+  .r2-star { color:#f59e0b; }
+  </style>
+</head>
+<body>
+<nav class="ds-nav">
+  <a href="/" class="ds-nav-brand">🤖 Auto<span>ML</span></a>
+  <div style="display:flex;gap:.5rem;align-items:center;">
+    {% if logged_in %}
+      <span style="font-size:.82rem;color:var(--text-2);">👤 {{ username }}</span>
+      <a href="/history" class="ds-btn ds-btn-ghost ds-btn-sm">My Runs</a>
+      <a href="/api/docs" class="ds-btn ds-btn-ghost ds-btn-sm">API</a>
+      <a href="/logout" class="ds-btn ds-btn-ghost ds-btn-sm">Logout</a>
+    {% else %}
+      <a href="/api/docs" class="ds-btn ds-btn-ghost ds-btn-sm">API Docs</a>
+      <a href="/login"    class="ds-btn ds-btn-ghost ds-btn-sm">Login</a>
+      <a href="/register" class="ds-btn ds-btn-primary ds-btn-sm">Register</a>
+    {% endif %}
+  </div>
+</nav>
+
+{% if results %}
+
+<!-- Hero -->
+<div class="ds-hero">
+  <div class="container py-1">
+    <div class="row g-3 align-items-center">
+      <div class="col-lg-5">
+        <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;opacity:.7;margin-bottom:.3rem;">Training Complete</div>
+        <h1 class="mb-1" style="font-size:1.5rem;">{{ best_model }} 🏆</h1>
+        <p style="opacity:.8;font-size:.9rem;">{{ model_type | title }} &middot; {{ selected_models | length }} models evaluated</p>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem;">
+          {% if report_id %}
+          <a href="/download_report/{{ report_id }}" class="ds-btn ds-btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.25);">⬇ Report</a>
+          {% endif %}
+          {% if model_path %}
+          <a href="/download_model?path={{ model_path }}" class="ds-btn ds-btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.25);">⬇ Model .pkl</a>
+          {% endif %}
+          {% if meta_path %}
+          <a href="/predict_page?meta={{ meta_path }}" class="ds-btn ds-btn-sm" style="background:#fff;color:var(--brand);">🔮 Predict</a>
+          {% endif %}
+          <a href="/" class="ds-btn ds-btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2);">+ New Run</a>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="row g-2">
+          {% if model_type == "classification" %}
+          <div class="col-4"><div class="hero-stat">
+            <div class="hero-stat-val">{{ results[best_model].accuracy }}%</div>
+            <div class="hero-stat-lbl">Accuracy</div>
+          </div></div>
+          <div class="col-4"><div class="hero-stat">
+            <div class="hero-stat-val">{{ results[best_model].f1_score }}%</div>
+            <div class="hero-stat-lbl">F1 Score</div>
+          </div></div>
+          <div class="col-4"><div class="hero-stat">
+            <div class="hero-stat-val">{{ results[best_model].cv_mean if results[best_model].cv_mean else '—' }}</div>
+            <div class="hero-stat-lbl">CV Mean</div>
+          </div></div>
+          {% else %}
+          <div class="col-4"><div class="hero-stat">
+            <div class="hero-stat-val">{{ results[best_model].r2 }}</div>
+            <div class="hero-stat-lbl">R² Score</div>
+          </div></div>
+          <div class="col-4"><div class="hero-stat">
+            <div class="hero-stat-val">{{ results[best_model].rmse }}</div>
+            <div class="hero-stat-lbl">RMSE</div>
+          </div></div>
+          <div class="col-4"><div class="hero-stat">
+            <div class="hero-stat-val">{{ results[best_model].cv_mean if results[best_model].cv_mean else '—' }}</div>
+            <div class="hero-stat-lbl">CV Mean</div>
+          </div></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4" style="max-width:1060px;">
+
+  <!-- Performance table -->
+  <div class="ds-card ds-section">
+    <div class="ds-card-header ds-card-header-accent">
+      <h2>Model Leaderboard</h2>
+      <span style="font-size:.8rem;color:rgba(255,255,255,.7);">Sorted by primary metric</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="ds-table">
+        <thead><tr>
+          <th>Model</th>
+          {% if model_type == "classification" %}
+            <th>Accuracy</th><th>F1 Score</th>
+          {% else %}
+            <th>R² ↑</th><th>RMSE ↓</th>
+          {% endif %}
+          <th>5-Fold CV</th>
+          <th>Train Time</th>
+          <th>Best Params</th>
+        </tr></thead>
+        <tbody>
+          {% for model, m in results.items() if model in selected_models %}
+          <tr class="{% if model == best_model %}best-row{% endif %}">
+            <td>
+              <strong>{{ model }}</strong>
+              {% if model == best_model %}<span class="ds-badge ds-badge-success ms-1">Best</span>{% endif %}
+            </td>
+            {% if model_type == "classification" %}
+              <td><span class="metric-pill {% if m.accuracy >= 90 %}ds-metric-green{% elif m.accuracy >= 75 %}ds-metric-yellow{% else %}ds-metric-red{% endif %}">{{ m.accuracy }}%</span></td>
+              <td>{{ m.f1_score }}%</td>
+            {% else %}
+              <td>
+                <span class="{% if m.r2 >= 0.9 %}ds-metric-green{% elif m.r2 >= 0.7 %}ds-metric-yellow{% else %}ds-metric-red{% endif %} metric-pill">
+                  {{ m.r2 }}
+                  {% if m.r2 >= 0.9 %}<span class="r2-star">★★★</span>{% elif m.r2 >= 0.7 %}<span class="r2-star">★★</span>{% elif m.r2 >= 0.5 %}<span class="r2-star">★</span>{% endif %}
+                </span>
+              </td>
+              <td><code>{{ m.rmse }}</code></td>
+            {% endif %}
+            <td class="cv-cell">
+              {% if m.cv_mean is not none %}<strong>{{ m.cv_mean }}</strong> <span style="color:var(--text-3);">± {{ m.cv_std }}</span>
+              {% else %}—{% endif %}
+            </td>
+            <td><span class="ds-badge ds-badge-gray">{{ m.train_time }}s</span></td>
+            <td><span class="param-code">{{ m.best_params | tojson }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if model_type == "regression" %}
+      <div style="padding:.6rem 1rem;font-size:.78rem;color:var(--text-2);background:var(--surface-2);border-top:1px solid var(--border);">
+        <strong>R² guide:</strong>
+        <span style="color:#15803d;">★★★ ≥0.90 Excellent</span> &middot;
+        <span style="color:#b45309;">★★ ≥0.70 Good</span> &middot;
+        <span style="color:#b45309;">★ ≥0.50 Fair</span> &middot;
+        <span style="color:#b91c1c;">— &lt;0.50 Poor</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Performance chart -->
+  {% if plot_base64 %}
+  <div class="ds-card ds-section">
+    <div class="ds-card-header"><h2>Performance Visualisation</h2></div>
+    <div class="ds-card-body text-center">
+      <img src="data:image/png;base64,{{ plot_base64 }}" class="img-fluid" style="max-height:320px;" alt="Performance chart">
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Classification plots -->
+  {% if model_type == "classification" %}
+    {% if roc_auc_plots %}<div class="ds-card ds-section">
+      <div class="ds-card-header ds-card-header-accent"><h2>ROC-AUC Curves</h2></div>
+      <div class="ds-card-body"><div class="row g-3">
+        {% for model, plot in roc_auc_plots.items() %}
+        <div class="col-md-6 text-center"><h6 style="font-size:.85rem;font-weight:600;margin-bottom:.5rem;">{{ model }}</h6>
+          <img src="data:image/png;base64,{{ plot }}" class="img-fluid rounded" alt="ROC {{ model }}"></div>
+        {% endfor %}
+      </div></div></div>{% endif %}
+
+    {% if confusion_matrix_plots %}<div class="ds-card ds-section">
+      <div class="ds-card-header ds-card-header-accent"><h2>Confusion Matrices</h2></div>
+      <div class="ds-card-body"><div class="row g-3">
+        {% for model, plot in confusion_matrix_plots.items() %}
+        <div class="col-md-6 text-center"><h6 style="font-size:.85rem;font-weight:600;margin-bottom:.5rem;">{{ model }}</h6>
+          <img src="data:image/png;base64,{{ plot }}" class="img-fluid rounded" alt="CM {{ model }}"></div>
+        {% endfor %}
+      </div></div></div>{% endif %}
+
+    {% if pr_curve_plots %}<div class="ds-card ds-section">
+      <div class="ds-card-header ds-card-header-accent"><h2>Precision-Recall Curves</h2></div>
+      <div class="ds-card-body"><div class="row g-3">
+        {% for model, plot in pr_curve_plots.items() %}
+        <div class="col-md-6 text-center"><h6 style="font-size:.85rem;font-weight:600;margin-bottom:.5rem;">{{ model }}</h6>
+          <img src="data:image/png;base64,{{ plot }}" class="img-fluid rounded" alt="PR {{ model }}"></div>
+        {% endfor %}
+      </div></div></div>{% endif %}
+  {% elif model_type == "regression" %}
+    {% if regression_plots %}<div class="ds-card ds-section">
+      <div class="ds-card-header ds-card-header-accent"><h2>Regression Diagnostic Plots</h2></div>
+      <div class="ds-card-body">
+        {% for model, plots in regression_plots.items() %}
+        <h6 style="font-weight:600;margin-bottom:.75rem;">{{ model }}{% if model == best_model %} <span class="ds-badge ds-badge-success">Best</span>{% endif %}</h6>
+        <div class="row g-3 mb-4">
+          {% for title, plot in plots.items() %}
+          <div class="col-md-4 text-center">
+            <p style="font-size:.78rem;color:var(--text-2);margin-bottom:.4rem;">{{ title }}</p>
+            <img src="data:image/png;base64,{{ plot }}" class="img-fluid rounded" style="border:1px solid var(--border);" alt="{{ title }}">
+          </div>
+          {% endfor %}
+        </div>
+        {% if not loop.last %}<hr style="border-color:var(--border);">{% endif %}
+        {% endfor %}
+      </div></div>{% endif %}
+  {% endif %}
+
+  <!-- SHAP -->
+  {% if shap_plots %}<div class="ds-card ds-section">
+    <div class="ds-card-header ds-card-header-accent">
+      <h2>SHAP Explainability</h2>
+      <span style="font-size:.8rem;color:rgba(255,255,255,.7);">Best model: {{ best_model }}</span>
+    </div>
+    <div class="ds-card-body">
+      <p style="font-size:.85rem;color:var(--text-2);margin-bottom:1rem;">
+        SHAP values show how each feature pushes predictions up or down.
+        <strong>Bar</strong> = global magnitude. <strong>Beeswarm</strong> = per-sample direction (red=high value, blue=low).
+      </p>
+      <div class="row g-4">
+        {% if shap_plots.bar %}<div class="col-md-6 text-center">
+          <h6 style="font-size:.85rem;font-weight:600;">Mean |SHAP| — Global Importance</h6>
+          <img src="data:image/png;base64,{{ shap_plots.bar }}" class="img-fluid rounded" style="border:1px solid var(--border);" alt="SHAP bar">
+        </div>{% endif %}
+        {% if shap_plots.beeswarm %}<div class="col-md-6 text-center">
+          <h6 style="font-size:.85rem;font-weight:600;">Beeswarm — Value &amp; Direction</h6>
+          <img src="data:image/png;base64,{{ shap_plots.beeswarm }}" class="img-fluid rounded" style="border:1px solid var(--border);" alt="SHAP beeswarm">
+        </div>{% endif %}
+      </div>
+    </div></div>{% endif %}
+
+  <!-- Feature Importance -->
+  {% if feature_importance_plots %}<div class="ds-card ds-section">
+    <div class="ds-card-header ds-card-header-accent"><h2>Feature Importance <span style="font-size:.8rem;opacity:.7;">(top 15)</span></h2></div>
+    <div class="ds-card-body">
+      <div class="accordion" id="impAcc">
+        {% for model, plot in feature_importance_plots.items() %}
+        <div class="accordion-item" style="border:1px solid var(--border);border-radius:var(--radius);margin-bottom:.5rem;overflow:hidden;">
+          <h2 class="accordion-header">
+            <button class="accordion-button {% if model != best_model %}collapsed{% endif %}"
+                    style="font-size:.9rem;font-weight:500;background:var(--surface-2);"
+                    type="button" data-bs-toggle="collapse" data-bs-target="#imp{{ loop.index }}">
+              {{ model }}{% if model == best_model %} <span class="ds-badge ds-badge-success ms-2">Best</span>{% endif %}
+            </button>
+          </h2>
+          <div id="imp{{ loop.index }}" class="accordion-collapse collapse {% if model == best_model %}show{% endif %}" data-bs-parent="#impAcc">
+            <div class="accordion-body text-center">
+              <img src="data:image/png;base64,{{ plot }}" class="img-fluid" alt="Importance {{ model }}">
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div></div>{% endif %}
+
+  <!-- Hyperparameters -->
+  <div class="ds-card ds-section">
+    <div class="ds-card-header"><h2>Hyperparameter Details</h2></div>
+    <div class="ds-card-body">
+      <div class="accordion" id="hpAcc">
+        {% for model in selected_models %}
+        <div class="accordion-item" style="border:1px solid var(--border);border-radius:var(--radius);margin-bottom:.5rem;overflow:hidden;">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" style="font-size:.9rem;font-weight:500;background:var(--surface-2);"
+                    type="button" data-bs-toggle="collapse" data-bs-target="#hp{{ loop.index }}">
+              {{ model }}{% if model == best_model %} <span class="ds-badge ds-badge-success ms-2">Best</span>{% endif %}
+            </button>
+          </h2>
+          <div id="hp{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#hpAcc">
+            <div class="accordion-body" style="font-size:.875rem;">
+              {% if hyperparameters[model] %}
+              <p style="font-weight:600;margin-bottom:.5rem;color:var(--text-2);">Search space</p>
+              <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;">
+                {% for param, values in hyperparameters[model].items() %}
+                <span class="param-code"><strong>{{ param }}</strong>: {{ values }}</span>
+                {% endfor %}
+              </div>
+              {% endif %}
+              {% if results[model] %}
+              <p style="font-weight:600;margin-bottom:.5rem;color:var(--text-2);">Optimal configuration</p>
+              <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem;">
+                {% for param, value in results[model].best_params.items() %}
+                <span style="background:#fef3c7;border:1px solid #fde68a;border-radius:5px;padding:.15rem .55rem;font-size:.8rem;font-family:monospace;">{{ param }} = {{ value }}</span>
+                {% endfor %}
+              </div>
+              <div style="display:flex;gap:1.5rem;font-size:.83rem;color:var(--text-2);border-top:1px solid var(--border);padding-top:.6rem;">
+                {% if model_type == "classification" %}
+                <span>Accuracy <strong style="color:var(--text-1);">{{ results[model].accuracy }}%</strong></span>
+                <span>F1 <strong style="color:var(--text-1);">{{ results[model].f1_score }}%</strong></span>
+                {% else %}
+                <span>R² <strong style="color:var(--text-1);">{{ results[model].r2 }}</strong></span>
+                <span>RMSE <strong style="color:var(--text-1);">{{ results[model].rmse }}</strong></span>
+                {% endif %}
+                <span>Train time <strong style="color:var(--text-1);">{{ results[model].train_time }}s</strong></span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% else %}
+<div class="container py-5 text-center">
+  <div class="ds-card" style="max-width:480px;margin:auto;">
+    <div class="ds-card-body">
+      <div style="font-size:2.5rem;margin-bottom:.75rem;">⚠️</div>
+      <h4>No models were run</h4>
+      <p style="color:var(--text-2);">Please select at least one model and try again.</p>
+      <a href="/" class="ds-btn ds-btn-primary">← Back to Upload</a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AutoML Platform</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+  /* ── Design System ─────────────────────────────────────────────────────────
+     Inter font, consistent tokens, refined components.
+     Applied globally across all pages via inline <style> blocks.
+  ── */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --brand:       #2563eb;
+    --brand-dark:  #1d4ed8;
+    --brand-light: #eff6ff;
+    --success:     #16a34a;
+    --warning:     #d97706;
+    --danger:      #dc2626;
+    --surface:     #ffffff;
+    --surface-2:   #f8fafc;
+    --border:      #e2e8f0;
+    --text-1:      #0f172a;
+    --text-2:      #475569;
+    --text-3:      #94a3b8;
+    --radius:      10px;
+    --radius-lg:   14px;
+    --shadow-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow:      0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
+    --shadow-lg:   0 10px 40px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.05);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--surface-2);
+    color: var(--text-1);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Navbar ── */
+  .ds-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .ds-nav-brand {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-1);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .ds-nav-brand span { color: var(--brand); }
+
+  /* ── Cards ── */
+  .ds-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .ds-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+  .ds-card-header h2, .ds-card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-1);
+    margin: 0;
+  }
+  .ds-card-body { padding: 1.25rem; }
+
+  /* ── Accent header (primary blue) ── */
+  .ds-card-header-accent {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    border-bottom: none;
+  }
+  .ds-card-header-accent h2,
+  .ds-card-header-accent h3,
+  .ds-card-header-accent .ds-subtitle { color: #fff !important; }
+
+  /* ── Stat boxes ── */
+  .ds-stat {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
+  .ds-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--brand);
+    line-height: 1.1;
+  }
+  .ds-stat-label {
+    font-size: .75rem;
+    color: var(--text-2);
+    margin-top: .25rem;
+    font-weight: 500;
+  }
+  .ds-stat.warn .ds-stat-value { color: var(--warning); }
+  .ds-stat.success .ds-stat-value { color: var(--success); }
+
+  /* ── Buttons ── */
+  .ds-btn {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .5rem 1.1rem;
+    font-size: .875rem; font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all .15s;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+  .ds-btn-primary {
+    background: var(--brand); color: #fff; border-color: var(--brand);
+  }
+  .ds-btn-primary:hover { background: var(--brand-dark); color: #fff; }
+  .ds-btn-success  { background: var(--success); color: #fff; border-color: var(--success); }
+  .ds-btn-success:hover  { background: #15803d; color: #fff; }
+  .ds-btn-ghost    { background: transparent; color: var(--text-2); border-color: var(--border); }
+  .ds-btn-ghost:hover    { background: var(--surface-2); }
+  .ds-btn-sm { padding: .3rem .75rem; font-size: .8rem; }
+  .ds-btn-lg { padding: .7rem 1.75rem; font-size: 1rem; }
+  .ds-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+  /* ── Badges ── */
+  .ds-badge {
+    display: inline-flex; align-items: center;
+    padding: .2rem .6rem;
+    font-size: .72rem; font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: .02em;
+  }
+  .ds-badge-success { background: #dcfce7; color: #15803d; }
+  .ds-badge-blue    { background: #dbeafe; color: #1d4ed8; }
+  .ds-badge-amber   { background: #fef3c7; color: #b45309; }
+  .ds-badge-red     { background: #fee2e2; color: #b91c1c; }
+  .ds-badge-gray    { background: #f1f5f9; color: #475569; }
+  .ds-badge-purple  { background: #ede9fe; color: #6d28d9; }
+
+  /* ── Tables ── */
+  .ds-table { width: 100%; border-collapse: collapse; }
+  .ds-table th {
+    text-align: left;
+    padding: .65rem 1rem;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .ds-table td {
+    padding: .7rem 1rem;
+    font-size: .875rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .ds-table tr:last-child td { border-bottom: none; }
+  .ds-table tr:hover td { background: var(--brand-light); }
+  .ds-table .best-row td { background: #f0fdf4; }
+
+  /* ── Page hero ── */
+  .ds-hero {
+    background: linear-gradient(135deg, var(--brand) 0%, #1e3a8a 100%);
+    color: #fff;
+    padding: 2rem 0 1.75rem;
+  }
+  .ds-hero h1 { font-size: 1.7rem; font-weight: 700; margin: 0 0 .3rem; }
+  .ds-hero p  { opacity: .8; margin: 0; font-size: .95rem; }
+
+  /* ── Metric chips ── */
+  .ds-metric { display: inline-block; padding: .2rem .7rem; border-radius: 6px; font-weight: 600; font-size: .85rem; }
+  .ds-metric-green  { background: #dcfce7; color: #15803d; }
+  .ds-metric-yellow { background: #fef3c7; color: #b45309; }
+  .ds-metric-red    { background: #fee2e2; color: #b91c1c; }
+
+  /* ── Section spacing ── */
+  .ds-section { margin-bottom: 1.5rem; }
+
+  /* ── Upload page specifics ── */
+  .step-num {
+    width:28px;height:28px;border-radius:50%;
+    background:var(--brand);color:#fff;
+    font-size:.78rem;font-weight:700;
+    display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .step-title { font-size:.95rem;font-weight:600;color:var(--text-1); }
+
+  .form-control, .form-select {
+    border:1px solid var(--border);border-radius:8px;
+    padding:.55rem .9rem;font-size:.875rem;
+    transition:border-color .15s,box-shadow .15s;
+  }
+  .form-control:focus,.form-select:focus {
+    border-color:var(--brand);
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);outline:none;
+  }
+  .form-label { font-size:.83rem;font-weight:600;color:var(--text-2);margin-bottom:.35rem; }
+  .form-text  { font-size:.75rem;color:var(--text-3); }
+
+  /* ── Missing bar ── */
+  .missing-bar { height:4px;border-radius:2px;background:var(--border);overflow:hidden;margin-top:4px; }
+  .missing-fill { height:100%;border-radius:2px;background:var(--warning); }
+
+  /* ── Badge types ── */
+  .dtype-num  { background:#dbeafe;color:#1d4ed8; }
+  .dtype-cat  { background:#fce7f3;color:#9d174d; }
+  .dtype-bool { background:#dcfce7;color:#15803d; }
+
+  /* ── Preview table ── */
+  .preview-table th,.preview-table td {
+    white-space:nowrap;max-width:130px;
+    overflow:hidden;text-overflow:ellipsis;
+    padding:4px 8px;font-size:.78rem;
+  }
+
+  /* ── Model checkboxes ── */
+  .model-check {
+    cursor:pointer;border-radius:var(--radius);
+    padding:.5rem .75rem;border:1px solid var(--border);
+    display:flex;align-items:center;gap:.5rem;
+    transition:all .15s;background:var(--surface);
+    font-size:.875rem;font-weight:500;
+  }
+  .model-check:hover { border-color:var(--brand);background:var(--brand-light); }
+  .model-check input { accent-color:var(--brand);width:15px;height:15px;flex-shrink:0; }
+
+  /* ── Progress terminal ── */
+  #progressLog {
+    background:#0f172a;color:#e2e8f0;
+    font-family:'JetBrains Mono',Consolas,monospace;font-size:.8rem;
+    border-radius:var(--radius);padding:1rem 1.25rem;
+    max-height:260px;overflow-y:auto;line-height:1.6;
+  }
+
+  /* ── Loading overlay ── */
+  #loadingOverlay {
+    display:none;position:fixed;inset:0;
+    background:rgba(255,255,255,.85);z-index:1050;
+    align-items:center;justify-content:center;flex-direction:column;gap:1rem;
+  }
+  #loadingOverlay.active { display:flex; }
+
+  /* ── Cluster panel accent ── */
+  .cluster-accent {
+    background:linear-gradient(135deg,#7c3aed,#4c1d95);
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+    padding:1rem 1.25rem;display:flex;align-items:center;gap:.6rem;
+  }
+  </style>
+</head>
+<body>
+
+<nav class="ds-nav">
+  <a href="/" class="ds-nav-brand">🤖 Auto<span>ML</span></a>
+  <div style="display:flex;gap:.5rem;align-items:center;">
+    {% if logged_in %}
+      <span style="font-size:.82rem;color:var(--text-2);">👤 {{ username }}</span>
+      <a href="/history" class="ds-btn ds-btn-ghost ds-btn-sm">My Runs</a>
+      <a href="/api/docs" class="ds-btn ds-btn-ghost ds-btn-sm">API</a>
+      <a href="/logout" class="ds-btn ds-btn-ghost ds-btn-sm">Logout</a>
+    {% else %}
+      <a href="/api/docs" class="ds-btn ds-btn-ghost ds-btn-sm">API Docs</a>
+      <a href="/login"    class="ds-btn ds-btn-ghost ds-btn-sm">Login</a>
+      <a href="/register" class="ds-btn ds-btn-primary ds-btn-sm">Register</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- Hero banner -->
+<div class="ds-hero">
+  <div class="container">
+    <h1>AutoML Platform</h1>
+    <p>Upload any CSV &rarr; explore data &rarr; train &amp; compare models &rarr; explain &amp; predict &mdash; no code required</p>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem;">
+      <span class="ds-badge ds-badge-blue">Classification</span>
+      <span class="ds-badge ds-badge-amber">Regression</span>
+      <span class="ds-badge ds-badge-purple">Clustering</span>
+      <span class="ds-badge ds-badge-gray">8 models + SHAP</span>
+      <span class="ds-badge ds-badge-gray">Live progress</span>
+      <span class="ds-badge ds-badge-gray">REST API</span>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4 pb-5" style="max-width:980px;">
+  <form id="uploadForm" method="POST" enctype="multipart/form-data" action="/upload">
+
+    <!-- Step 1 -->
+    <div class="ds-card ds-section">
+      <div class="ds-card-header">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <span class="step-num">1</span>
+          <span class="step-title">Upload Dataset</span>
+        </div>
+      </div>
+      <div class="ds-card-body">
+        <label class="form-label">Select CSV file</label>
+        <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+        <div class="form-text">Max 50 MB &middot; CSV only</div>
+        <div id="fileError" class="mt-2" style="display:none;font-size:.83rem;color:var(--danger);"></div>
+        <div id="fileLoading" class="mt-2" style="display:none;font-size:.82rem;color:var(--brand);">
+          <span class="spinner-border spinner-border-sm me-1"></span> Analysing file&hellip;
+        </div>
+      </div>
+    </div>
+
+    <!-- EDA: Overview -->
+    <div id="overviewCard" class="ds-card ds-section" style="display:none;">
+      <div class="ds-card-header">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <span style="font-size:1rem;">📊</span>
+          <span class="step-title">Dataset Overview</span>
+        </div>
+        <span id="datasetName" style="font-size:.8rem;color:var(--text-3);"></span>
+      </div>
+      <div class="ds-card-body">
+        <div class="row g-3 mb-4" id="statBoxes"></div>
+        <h6 style="font-size:.83rem;font-weight:600;color:var(--text-2);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em;">Column Summary</h6>
+        <div style="overflow-x:auto;margin-bottom:1.25rem;">
+          <table class="ds-table" style="min-width:500px;">
+            <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Unique</th><th>Missing</th><th>Missing %</th></tr></thead>
+            <tbody id="colTableBody"></tbody>
+          </table>
+        </div>
+        <h6 style="font-size:.83rem;font-weight:600;color:var(--text-2);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em;">Data Preview <span style="font-weight:400;text-transform:none;">(first 5 rows)</span></h6>
+        <div style="overflow-x:auto;">
+          <table class="ds-table preview-table">
+            <thead id="previewHead" style="background:var(--surface-2);"></thead>
+            <tbody id="previewBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDA: Correlation heatmap -->
+    <div id="corrCard" class="ds-card ds-section" style="display:none;">
+      <div class="ds-card-header">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <span>🔗</span><span class="step-title">Feature Correlation</span>
+          <span style="font-size:.78rem;color:var(--text-3);">(numeric features only)</span>
+        </div>
+      </div>
+      <div class="ds-card-body text-center">
+        <img id="corrImg" src="" class="img-fluid rounded" style="max-height:380px;" alt="Correlation heatmap">
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="targetCard" class="ds-card ds-section" style="display:none;">
+      <div class="ds-card-header">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <span class="step-num">2</span><span class="step-title">Select Target Column</span>
+        </div>
+      </div>
+      <div class="ds-card-body">
+        <label class="form-label">Target column (what to predict)</label>
+        <select class="form-select" id="target_column" name="target_column" required>
+          <option value="" disabled selected>&mdash; choose target &mdash;</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- EDA: Target distribution -->
+    <div id="targetDistCard" class="ds-card ds-section" style="display:none;">
+      <div class="ds-card-header">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <span>🎯</span><span class="step-title">Target Distribution</span>
+          <span id="taskBadge" class="ds-badge ms-1"></span>
+        </div>
+        <span id="targetLoading" style="display:none;font-size:.82rem;color:var(--brand);">
+          <span class="spinner-border spinner-border-sm me-1"></span>
+        </span>
+      </div>
+      <div class="ds-card-body">
+        <div id="targetStats" class="row g-2 mb-3"></div>
+        <div class="text-center">
+          <img id="targetDistImg" src="" class="img-fluid rounded" style="max-height:220px;" alt="Target distribution">
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="modelPanel" class="ds-card ds-section" style="display:none;">
+      <div class="ds-card-header">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <span class="step-num">3</span><span class="step-title">Select Models</span>
+        </div>
+        <div style="display:flex;gap:.4rem;">
+          <button type="button" class="ds-btn ds-btn-ghost ds-btn-sm" onclick="setAllModels(true)">All</button>
+          <button type="button" class="ds-btn ds-btn-ghost ds-btn-sm" onclick="setAllModels(false)">None</button>
+        </div>
+      </div>
+      <div class="ds-card-body">
+        <div id="modelList" class="row g-2"></div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div id="runPanel" class="ds-card ds-section" style="display:none;">
+      <div class="ds-card-header" style="background:linear-gradient(135deg,#16a34a,#14532d);border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <span class="step-num" style="background:rgba(255,255,255,.25);">4</span>
+          <span class="step-title" style="color:#fff;">Train &amp; Compare</span>
+        </div>
+      </div>
+      <div class="ds-card-body">
+        <p style="font-size:.875rem;color:var(--text-2);margin-bottom:1rem;">
+          Progress streams live — no page hanging. Results appear below as each model finishes.
+        </p>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;">
+          <button type="button" class="ds-btn ds-btn-success ds-btn-lg" id="runBtn" onclick="startTraining()">
+            ▶ Run Selected Models
+          </button>
+          <button type="button" class="ds-btn ds-btn-ghost" onclick="toggleClustering()">
+            🔵 Switch to Clustering
+          </button>
+        </div>
+
+        <!-- Live progress -->
+        <div id="progressBox" style="display:none;margin-top:1.25rem;">
+          <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+            <div class="spinner-border spinner-border-sm text-success" id="progressSpinner"></div>
+            <strong id="progressTitle" style="font-size:.9rem;">Initialising&hellip;</strong>
+          </div>
+          <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:.75rem;">
+            <div id="progressBar" style="height:100%;width:0%;background:var(--success);border-radius:4px;transition:width .4s ease;"></div>
+          </div>
+          <div id="progressLog"></div>
+          <div id="progressError" style="display:none;margin-top:.75rem;font-size:.85rem;color:var(--danger);"></div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Clustering panel -->
+  <div id="clusterPanel" class="ds-card ds-section" style="display:none;">
+    <div class="cluster-accent">
+      <span style="font-size:1rem;">🔵</span>
+      <span style="font-size:.95rem;font-weight:600;color:#fff;">Clustering — No Target Needed</span>
+    </div>
+    <div class="ds-card-body">
+      <p style="font-size:.875rem;color:var(--text-2);margin-bottom:1rem;">
+        Discovers natural groups using <strong>KMeans</strong>, <strong>DBSCAN</strong>, and <strong>Agglomerative</strong> clustering
+        with PCA scatter plots, elbow curves, and silhouette scores.
+      </p>
+      <form id="clusterForm" method="POST" enctype="multipart/form-data" action="/cluster">
+        <div class="mb-3">
+          <label class="form-label">Select CSV file</label>
+          <input type="file" class="form-control" id="clusterFile" name="file" accept=".csv" required>
+        </div>
+        <button type="submit" class="ds-btn ds-btn-lg" style="background:linear-gradient(135deg,#7c3aed,#4c1d95);color:#fff;"
+                onclick="document.getElementById('loadingOverlay').classList.add('active');this.disabled=true;">
+          🔵 Run Clustering
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:.5rem;">
+    <a href="/api/docs" class="ds-btn ds-btn-ghost ds-btn-sm">📖 REST API Docs</a>
+  </div>
+
+</div>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay">
+  <div class="spinner-border text-primary" style="width:2.5rem;height:2.5rem;" role="status"></div>
+  <p style="font-size:.95rem;font-weight:500;color:var(--text-1);">Training models&hellip;</p>
+</div>
+
+<script>
+var cachedFile = null;
+
+function showEl(id)  { document.getElementById(id).style.display = ''; }
+function showBlk(id) { document.getElementById(id).style.display = 'block'; }
+function hideEl(id)  { document.getElementById(id).style.display = 'none'; }
+function setText(id,t) { document.getElementById(id).textContent = t; }
+function setHTML(id,h) { document.getElementById(id).innerHTML = h; }
+
+// ── Step 1: file chosen ──────────────────────────────────────────────────────
+document.getElementById('file').addEventListener('change', function() {
+  var file = this.files[0];
+  hideEl('fileError');
+  if (!file) return;
+  if (!file.name.toLowerCase().endsWith('.csv')) {
+    document.getElementById('fileError').textContent = 'Please select a CSV file.';
+    showBlk('fileError'); return;
+  }
+  cachedFile = file;
+  setText('datasetName', file.name);
+  showBlk('fileLoading');
+  ['overviewCard','corrCard','targetCard','targetDistCard','modelPanel','runPanel'].forEach(function(id){ hideEl(id); });
+
+  var fd = new FormData(); fd.append('file', file);
+  fetch('/get_columns', { method:'POST', body:fd })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      hideEl('fileLoading');
+      if (d.error) {
+        document.getElementById('fileError').textContent = d.error;
+        showBlk('fileError'); return;
+      }
+      renderOverview(d, file.name);
+    })
+    .catch(function(e){
+      hideEl('fileLoading');
+      document.getElementById('fileError').textContent = 'Could not reach server.';
+      showBlk('fileError');
+    });
+});
+
+function renderOverview(d, fname) {
+  setText('datasetName', fname);
+  var tc = d.n_rows * d.n_cols;
+  var mp = tc > 0 ? ((d.total_missing / tc)*100).toFixed(1) : '0.0';
+  setHTML('statBoxes',
+    '<div class="col-6 col-md-3"><div class="ds-stat"><div class="ds-stat-value">' + d.n_rows.toLocaleString() + '</div><div class="ds-stat-label">Rows</div></div></div>' +
+    '<div class="col-6 col-md-3"><div class="ds-stat"><div class="ds-stat-value">' + d.n_cols + '</div><div class="ds-stat-label">Columns</div></div></div>' +
+    '<div class="col-6 col-md-3"><div class="ds-stat ' + (d.total_missing > 0 ? 'warn' : '') + '"><div class="ds-stat-value">' + d.total_missing.toLocaleString() + '</div><div class="ds-stat-label">Missing (' + mp + '%)</div></div></div>' +
+    '<div class="col-6 col-md-3"><div class="ds-stat ' + (d.n_duplicates > 0 ? 'warn' : '') + '"><div class="ds-stat-value">' + d.n_duplicates + '</div><div class="ds-stat-label">Duplicates</div></div></div>'
+  );
+  var tb = document.getElementById('colTableBody');
+  tb.innerHTML = '';
+  d.col_info.forEach(function(c, i) {
+    var pct = d.n_rows > 0 ? (c.missing/d.n_rows*100).toFixed(1) : '0.0';
+    var bw  = Math.min(100, parseFloat(pct));
+    var bc  = 'dtype-num', lbl = c.dtype;
+    if (c.dtype.indexOf('object') === 0 || c.dtype === 'category') { bc = 'dtype-cat'; lbl = 'text'; }
+    else if (c.dtype === 'bool') { bc = 'dtype-bool'; lbl = 'bool'; }
+    else if (c.dtype.indexOf('int') === 0) lbl = 'int';
+    else if (c.dtype.indexOf('float') === 0) lbl = 'float';
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td style="color:var(--text-3);">' + (i+1) + '</td>' +
+      '<td><code style="font-size:.78rem;">' + c.name + '</code></td>' +
+      '<td><span class="ds-badge ' + bc + '">' + lbl + '</span></td>' +
+      '<td>' + c.unique.toLocaleString() + '</td>' +
+      '<td>' + (c.missing > 0 ? '<span style="color:var(--danger);font-weight:600;">' + c.missing + '</span>' : '0') + '</td>' +
+      '<td style="min-width:90px;">' + pct + '%<div class="missing-bar"><div class="missing-fill" style="width:' + bw + '%;"></div></div></td>';
+    tb.appendChild(tr);
+  });
+  var cols = Object.keys(d.preview);
+  document.getElementById('previewHead').innerHTML = '<tr>' + cols.map(function(c){ return '<th>' + c + '</th>'; }).join('') + '</tr>';
+  var pb = document.getElementById('previewBody');
+  pb.innerHTML = '';
+  var nr = d.preview[cols[0]].length;
+  for (var r = 0; r < nr; r++) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = cols.map(function(c){ return '<td title="' + d.preview[c][r] + '">' + d.preview[c][r] + '</td>'; }).join('');
+    pb.appendChild(tr);
+  }
+  if (d.corr_plot) {
+    document.getElementById('corrImg').src = 'data:image/png;base64,' + d.corr_plot;
+    showBlk('corrCard');
+  } else { hideEl('corrCard'); }
+  var sel = document.getElementById('target_column');
+  sel.innerHTML = '<option value="" disabled selected>&mdash; choose target &mdash;</option>';
+  d.columns.forEach(function(col){
+    var o = document.createElement('option'); o.value = o.textContent = col; sel.appendChild(o);
+  });
+  sel.value = '';
+  showBlk('overviewCard'); showBlk('targetCard');
+  hideEl('targetDistCard'); hideEl('modelPanel'); hideEl('runPanel');
+}
+
+// ── Step 2: target selected ──────────────────────────────────────────────────
+document.getElementById('target_column').addEventListener('change', function() {
+  var targetCol = this.value;
+  if (!targetCol || !cachedFile) return;
+  showBlk('targetLoading');
+  hideEl('targetDistCard'); hideEl('modelPanel'); hideEl('runPanel');
+  var fd1 = new FormData(); fd1.append('file', cachedFile); fd1.append('target_column', targetCol);
+  fetch('/eda_target', { method:'POST', body:fd1 })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d.error) {
+        document.getElementById('targetDistImg').src = 'data:image/png;base64,' + d.dist_plot;
+        var badge = document.getElementById('taskBadge');
+        if (d.task_type === 'classification') {
+          badge.className = 'ds-badge ds-badge-blue ms-1';
+          badge.textContent = 'Classification · ' + d.n_classes + ' classes';
+        } else {
+          badge.className = 'ds-badge ds-badge-amber ms-1';
+          badge.textContent = 'Regression';
+        }
+        var sh = '';
+        if (d.task_type === 'regression') {
+          sh = '<div class="col-4"><div class="ds-stat"><div class="ds-stat-value" style="font-size:1.2rem;">' + d.target_min + '</div><div class="ds-stat-label">Min</div></div></div>' +
+               '<div class="col-4"><div class="ds-stat"><div class="ds-stat-value" style="font-size:1.2rem;">' + d.target_mean + '</div><div class="ds-stat-label">Mean</div></div></div>' +
+               '<div class="col-4"><div class="ds-stat"><div class="ds-stat-value" style="font-size:1.2rem;">' + d.target_max + '</div><div class="ds-stat-label">Max</div></div></div>';
+        }
+        setHTML('targetStats', sh);
+        showBlk('targetDistCard');
+      }
+      var fd2 = new FormData(); fd2.append('file', cachedFile); fd2.append('target_column', targetCol);
+      return fetch('/check_target_column', { method:'POST', body:fd2 });
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      hideEl('targetLoading');
+      if (d.error) return;
+      var list = document.getElementById('modelList');
+      list.innerHTML = '';
+      d.models.forEach(function(m){
+        var col = document.createElement('div'); col.className = 'col-sm-6 col-md-4';
+        col.innerHTML = '<label class="model-check w-100"><input type="checkbox" name="selected_models" value="' + m.key + '" class="model-checkbox" checked> ' + m.name + '</label>';
+        list.appendChild(col);
+      });
+      showBlk('modelPanel'); showBlk('runPanel');
+    })
+    .catch(function(){ hideEl('targetLoading'); });
+});
+
+function setAllModels(v) { document.querySelectorAll('.model-checkbox').forEach(function(c){ c.checked=v; }); }
+function toggleClustering() {
+  var cp = document.getElementById('clusterPanel');
+  var rp = document.getElementById('runPanel');
+  var mp = document.getElementById('modelPanel');
+  if (cp.style.display === 'none' || !cp.style.display) { showBlk('clusterPanel'); hideEl('runPanel'); hideEl('modelPanel'); }
+  else { hideEl('clusterPanel'); showBlk('modelPanel'); showBlk('runPanel'); }
+}
+
+// ── SSE training ─────────────────────────────────────────────────────────────
+function startTraining() {
+  var checked = document.querySelectorAll('.model-checkbox:checked');
+  if (!checked.length)  { alert('Select at least one model.'); return; }
+  if (!cachedFile)      { alert('Upload a file first.'); return; }
+  var targetCol = document.getElementById('target_column').value;
+  if (!targetCol)       { alert('Select a target column.'); return; }
+
+  var fd = new FormData();
+  fd.append('file', cachedFile); fd.append('target_column', targetCol);
+  checked.forEach(function(cb){ fd.append('selected_models', cb.value); });
+
+  document.getElementById('runBtn').disabled = true;
+  showBlk('progressBox');
+  document.getElementById('progressBar').style.width = '5%';
+  setText('progressTitle', 'Connecting to server…');
+  setHTML('progressLog', '');
+  hideEl('progressError');
+
+  var totalModels = checked.length, doneModels = 0;
+
+  function logLine(msg, color) {
+    var log = document.getElementById('progressLog');
+    var line = document.createElement('div');
+    line.style.color = color || '#94a3b8';
+    line.textContent = msg;
+    log.appendChild(line);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  fetch('/train_stream', { method:'POST', body:fd })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data.error) {
+        document.getElementById('progressError').textContent = data.error;
+        showBlk('progressError');
+        document.getElementById('runBtn').disabled = false;
+        return;
+      }
+      setText('progressTitle', 'Training in progress…');
+      logLine('🚀 Job started — streaming live results…', '#7dd3fc');
+
+      var es = new EventSource(data.stream_url);
+
+      es.addEventListener('message', function(e) {
+        logLine(e.data);
+        document.getElementById('progressBar').style.width = Math.min(85, 5 + (doneModels/totalModels)*75) + '%';
+      });
+
+      es.addEventListener('progress', function(e) {
+        var msg = e.data;
+        logLine(msg, msg.startsWith('✅') ? '#86efac' : '#94a3b8');
+        if (msg.startsWith('✅')) {
+          doneModels++;
+          document.getElementById('progressBar').style.width = Math.min(90, 10 + Math.round((doneModels/totalModels)*80)) + '%';
+        }
+      });
+
+      es.addEventListener('done', function(e) {
+        es.close();
+        var result = JSON.parse(e.data);
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('progressSpinner').style.display = 'none';
+        setText('progressTitle', '✅ Done!  Best: ' + result.best_model);
+        logLine('🏆 Best model: ' + result.best_model, '#fde68a');
+
+        // Inline results mini-table
+        var log = document.getElementById('progressLog');
+        var tbl = document.createElement('div');
+        tbl.style.cssText = 'margin-top:10px;border-top:1px solid #334155;padding-top:8px;';
+        var isC = result.task_type === 'classification';
+        var html = '<table style="width:100%;border-collapse:collapse;font-size:.78rem;">';
+        html += '<tr style="color:#7dd3fc;"><th style="text-align:left;padding:2px 6px;">Model</th>';
+        html += isC ? '<th>Accuracy</th><th>F1</th>' : '<th>R²</th><th>RMSE</th>';
+        html += '<th>Time</th></tr>';
+        Object.keys(result.results).forEach(function(m) {
+          var r = result.results[m], isBest = m === result.best_model;
+          html += '<tr style="color:' + (isBest ? '#fde68a' : '#cbd5e1') + ';">';
+          html += '<td style="padding:2px 6px;">' + (isBest ? '🏆 ' : '') + m + '</td>';
+          if (isC) { html += '<td>' + r.accuracy + '%</td><td>' + r.f1_score + '%</td>'; }
+          else     { html += '<td>' + r.r2 + '</td><td>' + r.rmse + '</td>'; }
+          html += '<td>' + r.train_time + 's</td></tr>';
+        });
+        html += '</table>';
+        tbl.innerHTML = html;
+        log.appendChild(tbl);
+        log.scrollTop = log.scrollHeight;
+
+        var btn = document.createElement('button');
+        btn.className = 'ds-btn ds-btn-success'; btn.style.marginTop = '1rem';
+        btn.textContent = '📊 View Full Results';
+        btn.onclick = function() {
+          var hf = document.createElement('form'); hf.method='POST'; hf.action='/upload'; hf.enctype='multipart/form-data'; hf.style.display='none';
+          var dt = new DataTransfer(); dt.items.add(cachedFile);
+          var fi = document.createElement('input'); fi.type='file'; fi.name='file'; fi.files=dt.files; hf.appendChild(fi);
+          var tc2 = document.createElement('input'); tc2.type='hidden'; tc2.name='target_column'; tc2.value=targetCol; hf.appendChild(tc2);
+          checked.forEach(function(cb){ var mi=document.createElement('input'); mi.type='hidden'; mi.name='selected_models'; mi.value=cb.value; hf.appendChild(mi); });
+          document.body.appendChild(hf);
+          document.getElementById('loadingOverlay').classList.add('active');
+          hf.submit();
+        };
+        document.getElementById('progressBox').appendChild(btn);
+      });
+
+      es.addEventListener('error', function(e) {
+        es.close();
+        var msg = e.data || 'Server error';
+        document.getElementById('progressError').textContent = '❌ ' + msg;
+        showBlk('progressError');
+        document.getElementById('progressSpinner').style.display = 'none';
+        document.getElementById('runBtn').disabled = false;
+        logLine('❌ ' + msg, '#fca5a5');
+      });
+
+      es.onerror = function() {
+        if (es.readyState === EventSource.CLOSED) return;
+        es.close();
+        document.getElementById('progressError').textContent = 'Lost connection to server.';
+        showBlk('progressError');
+        document.getElementById('runBtn').disabled = false;
+      };
+    })
+    .catch(function(err) {
+      document.getElementById('progressError').textContent = 'Could not reach server: ' + err;
+      showBlk('progressError');
+      document.getElementById('runBtn').disabled = false;
+    });
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

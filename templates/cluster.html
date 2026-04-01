@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clustering Results — AutoML</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#f0f2f5; }
+    .page-header {
+      background: linear-gradient(135deg,#6f42c1,#4a2d8a);
+      color:#fff; padding:1.8rem 0 1.4rem; margin-bottom:2rem;
+    }
+    .page-header h1 { font-size:1.6rem; font-weight:600; }
+    .page-header p  { opacity:.85; margin:0; }
+    .card { border:none; border-radius:12px; }
+    .card-header { border-radius:12px 12px 0 0 !important; }
+    .best-badge { background:#d1ecf1; color:#0c5460; }
+    .metric-good { color:#198754; font-weight:600; }
+    .metric-warn { color:#fd7e14; font-weight:600; }
+    .metric-bad  { color:#dc3545; font-weight:600; }
+    .algo-card { border-left:4px solid #6f42c1; }
+    .cluster-pill {
+      display:inline-block; padding:2px 10px; border-radius:12px;
+      font-size:.78rem; font-weight:500; margin:2px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div>
+      <h1>🔵 Clustering Results</h1>
+      <p>Dataset: <strong>{{ dataset_name }}</strong> &nbsp;·&nbsp;
+         {{ n_samples }} samples &nbsp;·&nbsp; {{ n_features }} features
+         &nbsp;·&nbsp; PCA explains <strong>{{ pca_variance }}%</strong> of variance</p>
+    </div>
+    <div class="d-flex gap-2">
+      {% if logged_in %}
+        <a href="/history" class="btn btn-outline-light btn-sm">📋 History</a>
+      {% endif %}
+      <a href="/" class="btn btn-light btn-sm text-primary">+ New Analysis</a>
+    </div>
+  </div>
+</div>
+
+<div class="container pb-5" style="max-width:1000px;">
+
+  <!-- Summary -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header" style="background:linear-gradient(135deg,#6f42c1,#4a2d8a);color:#fff;">
+      <h4 class="mb-0">Summary</h4>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="p-3 rounded" style="background:#f3f0ff;border:1px solid #d8d0ff;">
+            <div class="text-muted small mb-1">Best Algorithm</div>
+            <div class="fs-5 fw-bold" style="color:#6f42c1;">{{ best_algo }} 🏆</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 rounded" style="background:#f3f0ff;border:1px solid #d8d0ff;">
+            <div class="text-muted small mb-1">Best Silhouette Score</div>
+            <div class="fs-5 fw-bold" style="color:#6f42c1;">
+              {{ results[best_algo].silhouette if results[best_algo].silhouette else '—' }}
+            </div>
+            <div class="text-muted" style="font-size:.75rem;">Range: -1 (bad) → 1 (perfect)</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 rounded" style="background:#f3f0ff;border:1px solid #d8d0ff;">
+            <div class="text-muted small mb-1">Clusters Found</div>
+            <div class="fs-5 fw-bold" style="color:#6f42c1;">
+              {{ results[best_algo].n_clusters }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info mt-3 mb-0 py-2 small">
+        <strong>How to read these results:</strong>
+        <strong>Silhouette Score</strong> (higher = better, max 1.0): measures how similar each point is to its own cluster vs others.
+        <strong>Davies-Bouldin</strong> (lower = better): average similarity between clusters — 0 is perfect.
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm comparison table -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header" style="background:linear-gradient(135deg,#6f42c1,#4a2d8a);color:#fff;">
+      <h4 class="mb-0">Algorithm Comparison</h4>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Algorithm</th>
+            <th>Clusters</th>
+            <th>Silhouette ↑</th>
+            <th>Davies-Bouldin ↓</th>
+            <th>Parameters</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for algo, r in results.items() %}
+          <tr class="{{ 'table-active' if algo == best_algo else '' }}">
+            <td>
+              <strong>{{ algo }}</strong>
+              {% if algo == best_algo %}<span class="badge best-badge ms-1">Best</span>{% endif %}
+              {% if algo == 'DBSCAN' and r.n_noise_points is defined %}
+                <br><span class="text-muted small">{{ r.n_noise_points }} noise points</span>
+              {% endif %}
+            </td>
+            <td><strong>{{ r.n_clusters }}</strong></td>
+            <td>
+              {% if r.silhouette is not none %}
+                <span class="{{ 'metric-good' if r.silhouette >= 0.5 else 'metric-warn' if r.silhouette >= 0.25 else 'metric-bad' }}">
+                  {{ r.silhouette }}
+                </span>
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              {% if r.davies_bouldin is not none %}
+                <span class="{{ 'metric-good' if r.davies_bouldin <= 1 else 'metric-warn' if r.davies_bouldin <= 2 else 'metric-bad' }}">
+                  {{ r.davies_bouldin }}
+                </span>
+              {% else %}—{% endif %}
+            </td>
+            <td><code class="small">{{ r.params | tojson }}</code></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Elbow + silhouette curve -->
+  {% if plots.elbow %}
+  <div class="card shadow-sm mb-4">
+    <div class="card-header" style="background:linear-gradient(135deg,#6f42c1,#4a2d8a);color:#fff;">
+      <h4 class="mb-0">KMeans — Elbow &amp; Silhouette Curves</h4>
+    </div>
+    <div class="card-body text-center">
+      <p class="text-muted small">Use these curves to verify the optimal k. The elbow = where adding more clusters stops reducing inertia significantly.</p>
+      <img src="data:image/png;base64,{{ plots.elbow }}" class="img-fluid rounded" alt="Elbow curve">
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Scatter plots -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header" style="background:linear-gradient(135deg,#6f42c1,#4a2d8a);color:#fff;">
+      <h4 class="mb-0">PCA 2D Cluster Visualisations
+        <span class="fw-normal fs-6 ms-2 opacity-75">({{ pca_variance }}% variance explained)</span>
+      </h4>
+    </div>
+    <div class="card-body">
+      <p class="text-muted small mb-3">Each point is one data sample projected to 2D via PCA. Colour = assigned cluster.</p>
+      <div class="row g-4">
+        {% if plots.kmeans_scatter %}
+        <div class="col-md-6 text-center">
+          <h6 class="fw-semibold">KMeans</h6>
+          <img src="data:image/png;base64,{{ plots.kmeans_scatter }}"
+               class="img-fluid rounded border" alt="KMeans scatter">
+        </div>
+        {% endif %}
+        {% if plots.dbscan_scatter %}
+        <div class="col-md-6 text-center">
+          <h6 class="fw-semibold">DBSCAN</h6>
+          <img src="data:image/png;base64,{{ plots.dbscan_scatter }}"
+               class="img-fluid rounded border" alt="DBSCAN scatter">
+        </div>
+        {% endif %}
+        {% if plots.agg_scatter %}
+        <div class="col-md-6 text-center">
+          <h6 class="fw-semibold">Agglomerative</h6>
+          <img src="data:image/png;base64,{{ plots.agg_scatter }}"
+               class="img-fluid rounded border" alt="Agglomerative scatter">
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Cluster size breakdown -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header" style="background:linear-gradient(135deg,#6f42c1,#4a2d8a);color:#fff;">
+      <h4 class="mb-0">Cluster Size Breakdown</h4>
+    </div>
+    <div class="card-body">
+      {% for algo, r in results.items() %}
+      <h6 class="fw-semibold mt-2 mb-2">{{ algo }}</h6>
+      <div class="mb-3">
+        {% for cluster_id, count in r.cluster_sizes.items() %}
+          {% if cluster_id == -1 %}
+            <span class="cluster-pill" style="background:#dee2e6;color:#495057;">
+              Noise: {{ count }}
+            </span>
+          {% else %}
+            {% set colors = ['#d0e8ff','#ffe0b2','#d4edda','#f8d7da','#e2d9f3','#fff3cd','#d1ecf1','#fce4ec'] %}
+            <span class="cluster-pill" style="background:{{ colors[loop.index0 % colors|length] }};color:#333;">
+              Cluster {{ cluster_id }}: {{ count }}
+            </span>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/" class="btn btn-outline-primary px-4">← Start New Analysis</a>
+    <a href="/api/docs" class="btn btn-outline-secondary px-4 ms-2">📖 API Docs</a>
+  </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

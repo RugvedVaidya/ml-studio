@@ -1,0 +1,23 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Auto-created app folders
+uploads/
+models/
+scalers/
+graphs/
+reports/
+automl.db
+
+# VS Code
+.vscode/
+tempCodeRunnerFile.py
+
+# OS
+.DS_Store
+Thumbs.db
