@@ -1,5 +1,10 @@
 # 🤖 AutoML Hyperparameter Optimization Platform
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-success)](https://ml-studio-lvy2.onrender.com)
+[![Python](https://img.shields.io/badge/Python-3.11-blue)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-2.3-lightgrey)](https://flask.palletsprojects.com)
+[![Tests](https://img.shields.io/badge/Tests-41%20passing-brightgreen)](test_app.py)
+
 A full-stack, browser-based AutoML platform built with Flask and scikit-learn. Upload any CSV dataset, explore it visually, train and compare multiple ML models with automated hyperparameter tuning, and get explainable AI insights — all without writing a single line of code.
 
 > **Live progress streaming** — watch each model train in real time via Server-Sent Events instead of staring at a loading spinner.
