@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: ml-studio
+    runtime: python
+    buildCommand: "pip install --no-cache-dir -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: FLASK_SECRET_KEY
+        generateValue: true
