@@ -12,6 +12,7 @@ lightgbm
 imbalanced-learn
 shap
 python-dotenv
+gunicorn==23.0.0
 
 # Development / testing only
 pytest
